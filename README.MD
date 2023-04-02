@@ -17,3 +17,21 @@ The expression allows numbers, variable names, signs of arithmetic operations, e
 }
 ```
 
+## Installation
+- Clone the project
+```
+git clone https://github.com/po4apo/mathExpressionHandler.git
+```
+- Go into project
+```shell
+cd ./mathExpressionHandler
+```
+- Build image
+```shell
+docker build -t math_expression_handler ./
+```
+- Run Container
+```shell
+docker run --rm -p 8000:8000 --name meh math_expression_handler:latest
+```
+
