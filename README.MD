@@ -19,7 +19,7 @@ The expression allows numbers, variable names, signs of arithmetic operations, e
 
 ## Installation
 - Clone the project
-```
+```shell
 git clone https://github.com/po4apo/mathExpressionHandler.git
 ```
 - Go into project
