@@ -1,32 +1,14 @@
 import pytest
 from rest_framework.serializers import ValidationError
 
+from conftest import valid_expressions, invalid_expressions
 from mathExpressionHandler.webAPI.serializers import expression_validator
 
-valid_expressions = [
-    ('4-2*a/(5*x-3)', '4-2*a/(5*x-3)'),
-    ('4/2', '4/2'),
-    ('4^b', '4^b'),
-    ('sum(4/2)', 'sum(4/2)'),
-    ('sum(4/2+2)', 'sum(4/2+2)'),
-    ('1.2+6/df', '1.2+6/df'),
-    ('-1.2+6/df', '-1.2+6/df'),
-]
 
-invalid_expressions = [
-    ('4-2*a/_(5*x-3)', '_'),
-    ('4-2*a.b/(5*x-3)', '.'),
-    ('4-2*a,b/(5*x-3)', ','),
-    ('os.system("rm -rf ./some_file")', '.'),
-    ("__import__('os').system('clear')", '_'),
-    ("_().__class__.__bases__[0]", '_'),
-]
-
-
-@pytest.mark.parametrize('expression, result', valid_expressions)
-def test_expression_validator_with_valid_data(expression, result):
+@pytest.mark.parametrize('expression', valid_expressions)
+def test_expression_validator_with_valid_data(expression):
     validation_result = expression_validator(expression)
-    assert result == validation_result
+    assert validation_result == None
 
 
 @pytest.mark.parametrize('expression, invalid_character', invalid_expressions)
