@@ -1,3 +1,5 @@
+import logging
+
 from rest_framework import status
 from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
@@ -7,9 +9,12 @@ from mathExpressionHandler.logicApp import MathExpressionHandler
 from .serializers import AlgebraicExpressionSerializer
 from mathExpressionHandler.exceptions import MathModuleError
 
+logger = logging.getLogger(__name__)
+
 
 
 class MathExpressionHandlerAPIView(APIView):
+    http_method_names = ['get', 'put']
     RESULT = "result"
     DETAIL = 'detail'
 
@@ -25,13 +30,15 @@ class MathExpressionHandlerAPIView(APIView):
         return Response(self.GET_MSG, status=status.HTTP_200_OK)
 
     def put(self, request, format=None):
+        logger.info(f'Got request: {request.data}')
         try:
             serializer = AlgebraicExpressionSerializer(data=request.data)
-
             if serializer.is_valid():
+                logger.debug('Data is valid')
                 meh = MathExpressionHandler(serializer.data['expression'], serializer.data['variables'])
-
-                return Response({self.RESULT: meh.calculate()}, status=status.HTTP_200_OK)
+                calculation_result = meh.calculate()
+                logger.debug(f'Calculation is success. {calculation_result=}')
+                return Response({self.RESULT: calculation_result}, status=status.HTTP_200_OK)
 
             return Response({self.DETAIL: f'ValidationError: {serializer.errors}'},
                                 status=status.HTTP_400_BAD_REQUEST)
@@ -43,4 +50,5 @@ class MathExpressionHandlerAPIView(APIView):
         except MathModuleError as e:
             return Response({self.DETAIL: f'MathModuleError: {e.args[0]}'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
+            logger.error(e.__traceback__)
             raise e
